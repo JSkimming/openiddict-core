@@ -966,15 +966,6 @@ public class OpenIddictTokenManager<TToken> : IOpenIddictTokenManager where TTok
         try
         {
             await UpdateAsync(token, cancellationToken);
-
-            Logger.LogInformation(6168, SR.GetResourceString(SR.ID6168), await Store.GetIdAsync(token, cancellationToken));
-
-            return true;
-        }
-
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            throw;
         }
 
         catch (ConcurrencyException exception)
@@ -984,12 +975,9 @@ public class OpenIddictTokenManager<TToken> : IOpenIddictTokenManager where TTok
             return false;
         }
 
-        catch (Exception exception) when (!OpenIddictHelpers.IsFatal(exception))
-        {
-            Logger.LogWarning(6170, exception, SR.GetResourceString(SR.ID6170), await Store.GetIdAsync(token, cancellationToken));
+        Logger.LogInformation(6168, SR.GetResourceString(SR.ID6168), await Store.GetIdAsync(token, cancellationToken));
 
-            return false;
-        }
+        return true;
     }
 
     /// <summary>
@@ -1048,15 +1036,6 @@ public class OpenIddictTokenManager<TToken> : IOpenIddictTokenManager where TTok
         try
         {
             await UpdateAsync(token, cancellationToken);
-
-            Logger.LogInformation(6174, SR.GetResourceString(SR.ID6174), await Store.GetIdAsync(token, cancellationToken));
-
-            return true;
-        }
-
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            throw;
         }
 
         catch (ConcurrencyException exception)
@@ -1066,12 +1045,9 @@ public class OpenIddictTokenManager<TToken> : IOpenIddictTokenManager where TTok
             return false;
         }
 
-        catch (Exception exception) when (!OpenIddictHelpers.IsFatal(exception))
-        {
-            Logger.LogWarning(6176, exception, SR.GetResourceString(SR.ID6176), await Store.GetIdAsync(token, cancellationToken));
+        Logger.LogInformation(6174, SR.GetResourceString(SR.ID6174), await Store.GetIdAsync(token, cancellationToken));
 
-            return false;
-        }
+        return true;
     }
 
     /// <summary>

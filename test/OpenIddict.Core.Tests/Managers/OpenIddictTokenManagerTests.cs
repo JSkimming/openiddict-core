@@ -1099,6 +1099,49 @@ public class OpenIddictTokenManagerTests
         Assert.Equal("subject", exception.ParamName);
     }
 
+    [Theory]
+    [InlineData(Statuses.Redeemed, false)]
+    [InlineData(Statuses.Redeemed, true)]
+    [InlineData(Statuses.Revoked, false)]
+    [InlineData(Statuses.Revoked, true)]
+    public async Task TokenStatusUpdate_OnlyReturnsFalseForConcurrencyFailures(string status, bool concurrency)
+    {
+        // Arrange
+        var token = new CustomToken();
+        var cache = Mock.Of<IOpenIddictTokenCache<CustomToken>>();
+        var logger = Mock.Of<ILogger<OpenIddictTokenManager<CustomToken>>>();
+        var options = Mock.Of<IOptionsMonitor<OpenIddictCoreOptions>>(
+            mock => mock.CurrentValue == new OpenIddictCoreOptions { TimeProvider = TimeProvider.System });
+        var store = new Mock<IOpenIddictTokenStore<CustomToken>>();
+
+        store.Setup(store => store.GetTypeAsync(token, It.IsAny<CancellationToken>()))
+             .ReturnsAsync(TokenTypeHints.RefreshToken);
+        store.Setup(store => store.GetStatusAsync(token, It.IsAny<CancellationToken>()))
+             .ReturnsAsync(status);
+
+        Exception failure = concurrency ? new OpenIddictExceptions.ConcurrencyException("Conflict") : new TimeoutException();
+        store.Setup(store => store.UpdateAsync(token, It.IsAny<CancellationToken>())).Throws(failure);
+
+        var manager = new OpenIddictTokenManager<CustomToken>(cache, logger, options, store.Object);
+
+        // Act and assert
+        ValueTask<bool> UpdateAsync() => status switch
+        {
+            Statuses.Redeemed => manager.TryRedeemAsync(token),
+            Statuses.Revoked  => manager.TryRevokeAsync(token),
+            _ => throw new InvalidOperationException()
+        };
+
+        if (concurrency)
+        {
+            Assert.False(await UpdateAsync());
+        }
+        else
+        {
+            Assert.Same(failure, await Assert.ThrowsAsync<TimeoutException>(() => UpdateAsync().AsTask()));
+        }
+    }
+
     [Fact]
     public async Task TryRedeemAsync_ThrowsAnExceptionForNullToken()
     {
