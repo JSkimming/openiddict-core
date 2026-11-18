@@ -351,6 +351,12 @@ public sealed class OpenIddictServerConfiguration : IPostConfigureOptions<OpenId
             builder.AddError(SR.GetResourceString(SR.ID0465));
         }
 
+        if (options.DeviceAuthorizationPollingInterval is TimeSpan interval &&
+            (interval <= TimeSpan.Zero || interval.Ticks % TimeSpan.TicksPerSecond is not 0))
+        {
+            builder.AddError(SR.GetResourceString(SR.ID0524));
+        }
+
         // Prevent the device authorization flow from being used if token storage is disabled, unless the degraded
         // mode has been enabled (in this case, additional checks will be enforced later to require custom handlers).
         if (options.DisableTokenStorage && !options.EnableDegradedMode && options.GrantTypes.Contains(GrantTypes.DeviceCode))

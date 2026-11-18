@@ -1771,6 +1771,15 @@ public sealed class OpenIddictServerBuilder
         => Configure(options => options.DeviceCodeLifetime = lifetime);
 
     /// <summary>
+    /// Sets the minimum time clients should wait between device token requests.
+    /// Specify a positive whole number of seconds, or <see langword="null"/> to omit the polling interval.
+    /// </summary>
+    /// <param name="interval">The device authorization polling interval.</param>
+    /// <returns>The <see cref="OpenIddictServerBuilder"/> instance.</returns>
+    public OpenIddictServerBuilder SetDeviceAuthorizationPollingInterval(TimeSpan? interval)
+        => Configure(options => options.DeviceAuthorizationPollingInterval = interval);
+
+    /// <summary>
     /// Sets the identity token lifetime, after which client
     /// applications should refuse processing identity tokens.
     /// While discouraged, <see langword="null"/> can be specified to issue tokens that never expire.

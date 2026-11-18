@@ -5551,6 +5551,11 @@ public static partial class OpenIddictServerHandlers
                     left : context.BaseUri ?? throw new InvalidOperationException(SR.GetResourceString(SR.ID0127)),
                     right: context.Options.EndUserVerificationEndpointUris[0]);
 
+                if (context.Options.DeviceAuthorizationPollingInterval is TimeSpan interval)
+                {
+                    context.Response[Parameters.Interval] = interval.Ticks / TimeSpan.TicksPerSecond;
+                }
+
                 context.Response.VerificationUri = uri.AbsoluteUri;
 
                 if (!string.IsNullOrEmpty(context.UserCode))

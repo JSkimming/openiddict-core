@@ -264,6 +264,12 @@ public sealed class OpenIddictServerOptions
     public TimeSpan? DeviceCodeLifetime { get; set; } = TimeSpan.FromMinutes(10);
 
     /// <summary>
+    /// Gets or sets the minimum time clients should wait between device token requests, in whole seconds.
+    /// The default is <see langword="null"/>, which omits the interval from device authorization responses.
+    /// </summary>
+    public TimeSpan? DeviceAuthorizationPollingInterval { get; set; }
+
+    /// <summary>
     /// Gets or sets the period of time identity tokens remain valid after being issued. The default value is 20 minutes.
     /// The client application is expected to refresh or acquire a new identity token after the token has expired.
     /// While not recommended, this property can be set to <see langword="null"/> to issue identity tokens that never expire.

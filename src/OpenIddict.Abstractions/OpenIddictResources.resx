@@ -1783,6 +1783,9 @@ To use a custom policy relying on the system store, set 'OpenIddictServerOptions
   <data name="ID0523" xml:space="preserve">
     <value>A configuration manager must be attached to the validation options.</value>
   </data>
+  <data name="ID0524" xml:space="preserve">
+    <value>The device authorization polling interval must be a positive whole number of seconds.</value>
+  </data>
   <data name="ID2000" xml:space="preserve">
     <value>The security token is missing.</value>
   </data>

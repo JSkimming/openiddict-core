@@ -560,6 +560,24 @@ public class OpenIddictServerConfigurationTests
         Assert.Contains(SR.GetResourceString(SR.ID0094), result.Failures!, StringComparer.Ordinal);
     }
 
+    [Theory]
+    [InlineData(-1_000)]
+    [InlineData(0)]
+    [InlineData(1_500)]
+    public void Validate_ReturnsAnErrorWhenDeviceAuthorizationPollingIntervalIsInvalid(int milliseconds)
+    {
+        // Arrange
+        var configuration = new OpenIddictServerConfiguration(new ServiceCollection().BuildServiceProvider());
+        var options = CreateBaseOptions();
+        options.DeviceAuthorizationPollingInterval = TimeSpan.FromMilliseconds(milliseconds);
+
+        // Act
+        var result = configuration.Validate(name: null, options);
+
+        // Assert
+        Assert.Contains(SR.GetResourceString(SR.ID0524), result.Failures!, StringComparer.Ordinal);
+    }
+
     [Fact]
     public void Validate_ReturnsAnErrorWhenUserCodeLengthIsTooShort()
     {

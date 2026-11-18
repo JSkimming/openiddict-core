@@ -932,6 +932,44 @@ public abstract partial class OpenIddictServerIntegrationTests
         Assert.Equal<IEnumerable<string?>?>(["custom_value_1", "custom_value_2"], (ImmutableArray<string?>?) response["parameter_with_multiple_values"]);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData(7)]
+    public async Task HandleDeviceAuthorizationRequest_ReturnsConfiguredPollingInterval(int? seconds)
+    {
+        // Arrange
+        await using var server = await CreateServerAsync(options =>
+        {
+            options.EnableDegradedMode();
+
+            if (seconds is int value)
+            {
+                options.SetDeviceAuthorizationPollingInterval(TimeSpan.FromSeconds(value));
+            }
+
+            options.AddEventHandler<HandleDeviceAuthorizationRequestContext>(builder =>
+                builder.UseInlineHandler(context =>
+                {
+                    context.Principal = new ClaimsPrincipal(new ClaimsIdentity());
+
+                    return ValueTask.CompletedTask;
+                }));
+        });
+
+        await using var client = await server.CreateClientAsync();
+
+        // Act
+        var response = await client.PostAsync("/connect/device", new OpenIddictRequest
+        {
+            ClientId = "Fabrikam"
+        });
+
+        // Assert
+        Assert.Null(response.Error);
+        Assert.NotNull(response.DeviceCode);
+        Assert.Equal((long?) seconds, (long?) response[Parameters.Interval]);
+    }
+
     [Fact]
     public async Task ApplyDeviceAuthorizationResponse_AllowsHandlingResponse()
     {
