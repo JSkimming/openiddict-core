@@ -1803,6 +1803,13 @@ public sealed class OpenIddictServerBuilder
         => Configure(options => options.RefreshTokenLifetime = lifetime);
 
     /// <summary>
+    /// Revokes all tokens associated with the same authorization when a refresh token is revoked at the revocation endpoint.
+    /// </summary>
+    /// <returns>The <see cref="OpenIddictServerBuilder"/> instance.</returns>
+    public OpenIddictServerBuilder EnableRefreshTokenRevocationCascade()
+        => Configure(options => options.EnableRefreshTokenRevocationCascade = true);
+
+    /// <summary>
     /// Sets the refresh token reuse leeway, during which rolling refresh tokens marked
     /// as redeemed can still be used to make concurrent refresh token requests.
     /// </summary>

@@ -677,6 +677,14 @@ public static partial class OpenIddictServerHandlers
                     return;
                 }
 
+                if (context.Options.EnableRefreshTokenRevocationCascade &&
+                    context.GenericTokenPrincipal.HasTokenType(TokenTypeIdentifiers.RefreshToken) &&
+                    await manager.GetAuthorizationIdAsync(token, context.CancellationToken) is { Length: > 0 } authorization)
+                {
+                    await manager.RevokeByAuthorizationIdAsync(authorization, context.CancellationToken);
+                    return;
+                }
+
                 // Try to revoke the token. If an error occurs, return an error.
                 if (!await manager.TryRevokeAsync(token, context.CancellationToken))
                 {

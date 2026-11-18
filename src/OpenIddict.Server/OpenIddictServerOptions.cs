@@ -296,6 +296,12 @@ public sealed class OpenIddictServerOptions
     public TimeSpan? RefreshTokenLifetime { get; set; } = TimeSpan.FromDays(14);
 
     /// <summary>
+    /// Gets or sets a boolean indicating whether all tokens associated with the same authorization
+    /// should be revoked when a refresh token is revoked at the revocation endpoint.
+    /// </summary>
+    public bool EnableRefreshTokenRevocationCascade { get; set; }
+
+    /// <summary>
     /// Gets or sets the period of time rolling refresh tokens marked as redeemed can still be
     /// used to make concurrent refresh token requests. The default value is 30 seconds.
     /// </summary>
