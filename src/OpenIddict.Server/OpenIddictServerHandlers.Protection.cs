@@ -1209,7 +1209,7 @@ public static partial class OpenIddictServerHandlers
                 // In this case, revoke the entire chain of tokens associated with the authorization, if one was attached to the token.
                 //
                 // Special logic is used to avoid revoking refresh tokens already marked as redeemed to allow for a small leeway.
-                // Note: the authorization itself is not revoked to allow the legitimate client to start a new flow.
+                // Note: by default, the authorization itself is not revoked to allow the legitimate client to start a new flow.
                 // See https://tools.ietf.org/html/rfc6749#section-10.5 for more information.
                 if (await manager.HasStatusAsync(token, Statuses.Redeemed, context.CancellationToken))
                 {
@@ -1233,6 +1233,38 @@ public static partial class OpenIddictServerHandlers
                             {
                                 context.Logger.LogWarning(6228, SR.GetResourceString(SR.ID6228), count, context.AuthorizationId);
                             }
+                        }
+
+                        if (context.Principal.HasTokenType(TokenTypeIdentifiers.RefreshToken))
+                        {
+                            if (context.Options.EnableAuthorizationRevocationOnRefreshTokenReuse &&
+                                !context.Options.DisableAuthorizationStorage && !string.IsNullOrEmpty(context.AuthorizationId))
+                            {
+                                var authorizations = context.ServiceProvider.GetService<IOpenIddictAuthorizationManager>()
+                                    ?? throw new InvalidOperationException(SR.GetResourceString(SR.ID0016));
+
+                                try
+                                {
+                                    var authorization = await authorizations.FindByIdAsync(context.AuthorizationId, context.CancellationToken);
+                                    if (authorization is not null)
+                                    {
+                                        await authorizations.TryRevokeAsync(authorization, context.CancellationToken);
+                                    }
+                                }
+
+                                catch (Exception exception) when (!OpenIddictHelpers.IsFatal(exception) &&
+                                    !context.CancellationToken.IsCancellationRequested)
+                                {
+                                    context.Logger.LogWarning(6166, exception, SR.GetResourceString(SR.ID6166), context.AuthorizationId);
+                                }
+                            }
+
+                            var dispatcher = context.ServiceProvider.GetRequiredService<IOpenIddictServerDispatcher>();
+                            await dispatcher.DispatchAsync(new RefreshTokenReuseDetectedContext(context.Transaction)
+                            {
+                                AuthorizationId = context.AuthorizationId,
+                                TokenId = context.TokenId
+                            });
                         }
 
                         context.Logger.LogInformation(6002, SR.GetResourceString(SR.ID6002), context.TokenId);

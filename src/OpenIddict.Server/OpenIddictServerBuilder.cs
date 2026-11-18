@@ -1812,6 +1812,13 @@ public sealed class OpenIddictServerBuilder
         => Configure(options => options.RefreshTokenReuseLeeway = leeway);
 
     /// <summary>
+    /// Revokes the authorization associated with a refresh token when reuse is detected outside the configured leeway.
+    /// </summary>
+    /// <returns>The <see cref="OpenIddictServerBuilder"/> instance.</returns>
+    public OpenIddictServerBuilder EnableAuthorizationRevocationOnRefreshTokenReuse()
+        => Configure(options => options.EnableAuthorizationRevocationOnRefreshTokenReuse = true);
+
+    /// <summary>
     /// Sets the charset used by OpenIddict to generate random user codes.
     /// </summary>
     /// <remarks>

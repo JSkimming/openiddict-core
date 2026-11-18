@@ -302,6 +302,12 @@ public sealed class OpenIddictServerOptions
     public TimeSpan? RefreshTokenReuseLeeway { get; set; } = TimeSpan.FromSeconds(30);
 
     /// <summary>
+    /// Gets or sets a boolean indicating whether the authorization associated with a refresh token
+    /// should be revoked when reuse is detected outside the configured leeway.
+    /// </summary>
+    public bool EnableAuthorizationRevocationOnRefreshTokenReuse { get; set; }
+
+    /// <summary>
     /// Gets the charset used by OpenIddict to generate random user codes.
     /// </summary>
     /// <remarks>

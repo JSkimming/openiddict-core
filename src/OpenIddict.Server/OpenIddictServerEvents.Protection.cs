@@ -13,6 +13,30 @@ namespace OpenIddict.Server;
 public static partial class OpenIddictServerEvents
 {
     /// <summary>
+    /// Represents an event raised when a redeemed refresh token is used outside the configured leeway.
+    /// </summary>
+    public sealed class RefreshTokenReuseDetectedContext : BaseContext
+    {
+        /// <summary>
+        /// Creates a new instance of the <see cref="RefreshTokenReuseDetectedContext"/> class.
+        /// </summary>
+        public RefreshTokenReuseDetectedContext(OpenIddictServerTransaction transaction)
+            : base(transaction)
+        {
+        }
+
+        /// <summary>
+        /// Gets the identifier of the redeemed refresh token.
+        /// </summary>
+        public required string TokenId { get; init; }
+
+        /// <summary>
+        /// Gets the identifier of the authorization associated with the refresh token, if available.
+        /// </summary>
+        public string? AuthorizationId { get; init; }
+    }
+
+    /// <summary>
     /// Represents an event called when generating a token.
     /// </summary>
     public sealed class GenerateTokenContext : BaseValidatingContext
