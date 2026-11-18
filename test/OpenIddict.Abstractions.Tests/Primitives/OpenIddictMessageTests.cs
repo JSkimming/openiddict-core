@@ -469,11 +469,16 @@ public class OpenIddictMessageTests
     [InlineData(Parameters.ClientAssertion)]
     [InlineData(Parameters.ClientSecret)]
     [InlineData(Parameters.Code)]
+    [InlineData(Parameters.CodeVerifier)]
+    [InlineData(Parameters.DeviceCode)]
     [InlineData(Parameters.IdToken)]
     [InlineData(Parameters.IdTokenHint)]
     [InlineData(Parameters.Password)]
     [InlineData(Parameters.RefreshToken)]
+    [InlineData(Parameters.RequestUri)]
+    [InlineData(Parameters.State)]
     [InlineData(Parameters.Token)]
+    [InlineData(Parameters.UserCode)]
     [InlineData("custom_token")]
     public void ToString_ExcludesSensitiveParameters(string parameter)
     {
@@ -485,6 +490,7 @@ public class OpenIddictMessageTests
         var element = JsonSerializer.Deserialize<JsonElement>(message.ToString());
         Assert.DoesNotContain("secret value", message.ToString(), StringComparison.Ordinal);
         Assert.Equal("[redacted]", element.GetProperty(parameter).GetString());
+        Assert.Equal("secret value", JsonSerializer.SerializeToElement(message).GetProperty(parameter).GetString());
     }
 
     [Fact]

@@ -382,11 +382,16 @@ public class OpenIddictMessage
                 case OpenIddictConstants.Parameters.ClientAssertion:
                 case OpenIddictConstants.Parameters.ClientSecret:
                 case OpenIddictConstants.Parameters.Code:
+                case OpenIddictConstants.Parameters.CodeVerifier:
+                case OpenIddictConstants.Parameters.DeviceCode:
                 case OpenIddictConstants.Parameters.IdToken:
                 case OpenIddictConstants.Parameters.IdTokenHint:
                 case OpenIddictConstants.Parameters.Password:
                 case OpenIddictConstants.Parameters.RefreshToken:
+                case OpenIddictConstants.Parameters.RequestUri:
+                case OpenIddictConstants.Parameters.State:
                 case OpenIddictConstants.Parameters.Token:
+                case OpenIddictConstants.Parameters.UserCode:
                 case { Length: > 6 } name when name.EndsWith("_token", StringComparison.OrdinalIgnoreCase):
                     writer.WriteStringValue("[redacted]");
                     continue;
